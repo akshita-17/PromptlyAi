@@ -1,84 +1,107 @@
-import express from 'express';
-import Thread from '../models/Thread.js';
-import getOpenAiResponse from '../utils/openai.js';
+import express from "express";
+import Thread from "../models/Thread.js";
+import getOpenAIAPIResponse from "../utils/openai.js";
 
 const router = express.Router();
-console.log("chat.js");
 
-// Read all threads
-router.get("/thread", async (req, res) => {
+//test
+router.post("/test", async(req, res) => {
     try {
-        const threads = await Thread.find({}).sort({ updatedAt: -1 });
+        const thread = new Thread({
+            threadId: "abc",
+            title: "Testing New Thread2"
+        });
+
+        const response = await thread.save();
+        res.send(response);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({error: "Failed to save in DB"});
+    }
+});
+
+//Get all threads
+router.get("/thread", async(req, res) => {
+    try {
+        const threads = await Thread.find({}).sort({updatedAt: -1});
+        //descending order of updatedAt...most recent data on top
         res.json(threads);
-    } catch (err) {
+    } catch(err) {
         console.log(err);
-        res.status(500).json("some error occurred: failed to fetch threads!");
+        res.status(500).json({error: "Failed to fetch threads"});
     }
 });
 
-// Show individual thread
-router.get("/thread/:ThreadId", async (req, res) => {
-    const { ThreadId } = req.params;
+router.get("/thread/:threadId", async(req, res) => {
+    const {threadId} = req.params;
+
     try {
-        const thread = await Thread.findOne({ ThreadId });
-        if (!thread) {
-            return res.status(404).json("no chat found");  // ← added return
+        const thread = await Thread.findOne({threadId});
+
+        if(!thread) {
+            res.status(404).json({error: "Thread not found"});
         }
+
         res.json(thread.messages);
-    } catch (err) {
+    } catch(err) {
         console.log(err);
-        res.status(500).json("Could not find chat");
+        res.status(500).json({error: "Failed to fetch chat"});
     }
 });
 
-// Delete a thread
-router.delete("/thread/:ThreadId", async (req, res) => {
-    const { ThreadId } = req.params;
+router.delete("/thread/:threadId", async (req, res) => {
+    const {threadId} = req.params;
+
     try {
-        const deleted = await Thread.findOneAndDelete({ ThreadId });
-        if (!deleted) {
-            return res.status(404).json("couldn't delete thread");  // ← added return
+        const deletedThread = await Thread.findOneAndDelete({threadId});
+
+        if(!deletedThread) {
+            res.status(404).json({error: "Thread not found"});
         }
-        res.status(200).json("Deleted successfully!");
-    } catch (err) {
+
+        res.status(200).json({success : "Thread deleted successfully"});
+
+    } catch(err) {
         console.log(err);
-        res.status(500).json("could not delete");
+        res.status(500).json({error: "Failed to delete thread"});
     }
 });
 
-// Chat route
-router.post("/chat", async (req, res) => {
-    const { ThreadId, message } = req.body;
-    if (!ThreadId || !message) {
-        return res.status(400).json("required credentials not found!");  // ← added return
-    }
-    try {
-        let thread = await Thread.findOne({ ThreadId });  // ← let instead of const
+router.post("/chat", async(req, res) => {
+    const {threadId, message} = req.body;
 
-        if (!thread) {
-            // ← was creating new Thread but never saving, and was redeclaring with const
+    if(!threadId || !message) {
+        res.status(400).json({error: "missing required fields"});
+    }
+
+    try {
+        let thread = await Thread.findOne({threadId});
+
+        if(!thread) {
+            //create a new thread in Db
             thread = new Thread({
-                ThreadId,
+                threadId,
                 title: message,
-                messages: [{ role: "user", content: message }]
+                messages: [{role: "user", content: message}]
             });
         } else {
-            thread.messages.push({ role: "user", content: message });
+            thread.messages.push({role: "user", content: message});
         }
 
-        // Get response from OpenAI
-        const { reply: assistantReply, responseId } = await getOpenAiResponse(message, ThreadId);  // ← destructure both values
+        const assistantReply = await getOpenAIAPIResponse(message);
 
-        thread.messages.push({ role: "assistant", content: assistantReply });  // ← fixed typo "assisstant"
+        thread.messages.push({role: "assistant", content: assistantReply});
         thread.updatedAt = new Date();
-        await thread.save();  // ← now saves both new and existing threads correctly
 
-        res.json({ reply: assistantReply, threadId: responseId });  // ← send responseId back to frontend
-
-    } catch (err) {
+        await thread.save();
+        res.json({reply: assistantReply});
+    } catch(err) {
         console.log(err);
-        res.status(500).json(err.message);
+        res.status(500).json({error: "something went wrong"});
     }
 });
+
+
+
 
 export default router;

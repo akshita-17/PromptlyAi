@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* no overflow here — scrolling handled by .chatScrollArea in ChatWindow */
 }
 
 /* ── User message ──────────────────────────────────────────────── */
