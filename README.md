@@ -1,78 +1,111 @@
-# Promptly AI 
-A backend service for an AI-powered conversational application built using Node.js, Express, and MongoDB.
-This project manages chat threads, message storage, and AI-generated responses.
+# PromptlyAI
+
+A full-stack AI-powered conversational application built with React, Node.js, Express, and MongoDB. PromptlyAI supports thread-based chat, real-time AI responses, and a clean minimal UI.
 
 ---
 
-##  Features
+## Features
 
-* Thread-based chat system
-* Store user & assistant messages
-* CRUD operations for threads
-* AI response integration (OpenAI API)
-* Fallback/mock response support (if API unavailable)
-* RESTful API design
+- Thread-based chat system
+- Store and retrieve user & assistant messages
+- CRUD operations for chat threads
+- AI response integration via OpenAI Chat Completions API
+- Full conversation context sent per request using stored message history
+- RESTful API design
+- Responsive React frontend with typing animation
+- Markdown & syntax-highlighted code rendering
+- Auto-scroll and thread switching
 
 ---
 
 ## Tech Stack
 
-* Node.js
-* Express.js
-* MongoDB + Mongoose
-* OpenAI API
+**Frontend**
+- React.js
+- React Markdown + Rehype Highlight
+- Context API for state management
+- CSS (custom dark theme)
+
+**Backend**
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- OpenAI Chat Completions API (`gpt-4o-mini`)
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
-Backend/
+PromptlyAI/
 │
-├── models/
-│   └── Thread.js
+├── Backend/
+│   ├── models/
+│   │   └── Thread.js
+│   ├── routes/
+│   │   └── chat.js
+│   ├── utils/
+│   │   └── openai.js
+│   ├── .env
+│   ├── .gitignore
+│   ├── package-lock.json
+│   ├── package.json
+│   └── server.js
 │
-├── routes/
-│   └── chat.js
+├── Frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   │   ├── blacklogo.png
+│   │   │   ├── promptlyai_logo.png
+│   │   │   └── promptlyai-icon-v2.png
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── Chat.css
+│   │   ├── Chat.jsx
+│   │   ├── ChatWindow.css
+│   │   ├── ChatWindow.jsx
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   ├── MyContext.jsx
+│   │   ├── Sidebar.css
+│   │   └── Sidebar.jsx
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── README.md
+│   └── vite.config.js
 │
-├── utils/
-│   └── openai.js
-│
-├── server.js
-├── .env
-├── package.json
+└── README.md
 ```
 
 ---
 
-##  API Endpoints
+## API Endpoints
 
-### 🔹 Get all threads
-
+#### Get all threads
 ```
 GET /api/thread
 ```
 
-### 🔹 Get a specific thread
-
+#### Get a specific thread
 ```
 GET /api/thread/:ThreadId
 ```
 
-### 🔹 Delete a thread
-
+#### Delete a thread
 ```
 DELETE /api/thread/:ThreadId
 ```
 
-### 🔹 Chat (send message)
-
+#### Send a message
 ```
 POST /api/chat
 ```
 
-#### Request Body:
-
+Request body:
 ```json
 {
   "ThreadId": "abc",
@@ -80,22 +113,34 @@ POST /api/chat
 }
 ```
 
-#### Response:
-
+Response:
 ```json
 {
-  "reply": "AI response here"
+  "reply": "AI response here",
+  "threadId": "abc"
 }
 ```
 
 ---
 
-##  Notes
+## Getting Started
 
-* OpenAI API requires billing credits
-* Mock responses can be used for testing
-* `.env` required:
+### Backend
+```bash
+cd Backend
+npm install
+nodemon server.js
+```
 
+### Frontend
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+
+### Environment Variables
+Create a `.env` file in the Backend directory:
 ```
 MONGODB_URI=your_mongodb_uri
 OPENAI_API_KEY=your_api_key
@@ -103,39 +148,35 @@ OPENAI_API_KEY=your_api_key
 
 ---
 
-##  Future Scope
+## How It Works
 
-* RAG-based retrieval system for contextual responses
-* Docker containerization for easier deployment
-* CI/CD pipeline for automated build and testing
-* AWS deployment for scalability and production hosting
-* Authentication & user management
-* Pagination for large chat histories
-* Scalable architecture (separate message collection)
+Each chat message is stored in MongoDB under a thread. When a new message is sent, the full message history for that thread is fetched and passed to the OpenAI Chat Completions API as context. This keeps conversations coherent across multiple messages without relying on any stateful API.
 
 ---
 
-##  Run Locally
+## Learning Highlights
 
-```
-npm install
-nodemon server.js
-```
-
----
-
-##  Learning Highlights
-
-* Designed thread-message schema
-* Built REST APIs using Express
-* Managed async flows and error handling
-* Integrated external AI service
+- Designed thread-message schema in MongoDB
+- Built REST APIs using Express with proper error handling
+- Managed async flows across frontend and backend
+- Integrated OpenAI Chat Completions API with full conversation context
+- Built a React UI with typing animation, markdown rendering, and thread management
+- Used React Context API for global state
 
 ---
 
-##  Status
+## Future Scope
 
- Backend completed
- 
- Frontend in progress
+- 🔐 Authentication & user management (JWT-based)
+- 🐳 Docker containerization for easier deployment
+- ☁️ AWS deployment for production hosting
+- ⚙️ CI/CD pipeline for automated build and testing
 
+---
+
+## Status
+
+![Backend](https://img.shields.io/badge/Backend-Complete-brightgreen)
+![Frontend](https://img.shields.io/badge/Frontend-Complete-brightgreen)
+![Auth](https://img.shields.io/badge/Auth-In%20Progress-yellow)
+![Deployment](https://img.shields.io/badge/Deployment-Planned-lightgrey)
