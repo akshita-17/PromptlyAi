@@ -1,0 +1,204 @@
+.chatWindow {
+  flex: 1;
+  height: 100vh;
+  background-color: #212121;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── Navbar ───────────────────────────────────────────────────── */
+.navbar {
+  height: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.navbar span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e8e8e8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.navbar span i {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* ── User icon ─────────────────────────────────────────────────── */
+.userIconWrapper {
+  position: relative;
+}
+
+.userIconDiv {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.userIconDiv:hover {
+  background-color: #4a4a4a;
+}
+
+.userIcon {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+/* ── Dropdown ──────────────────────────────────────────────────── */
+.dropDown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background-color: #2c2c2c;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  min-width: 180px;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dropDownItem {
+  padding: 11px 16px;
+  font-size: 0.875rem;
+  color: #d4d4d4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.dropDownItem:hover {
+  background-color: #383838;
+}
+
+.dropDownItem i {
+  width: 16px;
+  text-align: center;
+  color: #888;
+}
+
+/* ── New chat splash ───────────────────────────────────────────── */
+.newChatSplash {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.newChatSplash h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  letter-spacing: -0.02em;
+}
+
+/* ── Chat scroll area ──────────────────────────────────────────── */
+.chatScrollArea {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
+}
+
+.chatScrollArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chatScrollArea::-webkit-scrollbar-thumb {
+  background-color: #3a3a3a;
+  border-radius: 4px;
+}
+
+/* ── Input area ────────────────────────────────────────────────── */
+.chatInput {
+  padding: 16px 24px 20px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.inputBox {
+  width: 100%;
+  max-width: 680px;
+  background-color: #2f2f2f;
+  border-radius: 14px;
+  border: 1px solid #3a3a3a;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px 4px 16px;
+  gap: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.inputBox:focus-within {
+  border-color: #555;
+}
+
+.inputBox input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e8e8e8;
+  font-size: 0.95rem;
+  padding: 10px 0;
+  caret-color: #e8e8e8;
+}
+
+.inputBox input::placeholder {
+  color: #666;
+}
+
+.inputBox input:disabled {
+  opacity: 0.5;
+}
+
+#submit {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background-color: #424242;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+#submit:hover {
+  background-color: #505050;
+}
+
+#submit i {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* ── Info text ─────────────────────────────────────────────────── */
+.info {
+  font-size: 0.72rem;
+  color: #555;
+  text-align: center;
+  margin: 0;
+}
