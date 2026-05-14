@@ -1,6 +1,6 @@
 import express from "express";
 import Thread from "../models/Thread.js";
-import getGrokAPIResponse from "../utils/grokai.js";
+import getGrokAPIResponse from "../utils/openai.js";
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.get("/thread/:threadId", async(req, res) => {
         const thread = await Thread.findOne({threadId});
 
         if(!thread) {
-            res.status(404).json({error: "Thread not found"});
+            return res.status(404).json({error: "Thread not found"});
         }
 
         res.json(thread.messages);
@@ -56,7 +56,7 @@ router.delete("/thread/:threadId", async (req, res) => {
         const deletedThread = await Thread.findOneAndDelete({threadId});
 
         if(!deletedThread) {
-            res.status(404).json({error: "Thread not found"});
+            return res.status(404).json({error: "Thread not found"});
         }
 
         res.status(200).json({success : "Thread deleted successfully"});
@@ -71,7 +71,7 @@ router.post("/chat", async(req, res) => {
     const {threadId, message} = req.body;
 
     if(!threadId || !message) {
-        res.status(400).json({error: "missing required fields"});
+        return res.status(400).json({error: "missing required fields"});
     }
 
     try {
@@ -88,20 +88,36 @@ router.post("/chat", async(req, res) => {
             thread.messages.push({role: "user", content: message});
         }
 
-        const assistantReply = await getGrokAPIResponse(message);
+        // Prepare messages for Grok API (full conversation context)
+        const messagesForGrok = thread.messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+        }));
 
+        console.log("Sending to Grok:", messagesForGrok);
+
+        // Get response from Grok
+        const assistantReply = await getGrokAPIResponse(messagesForGrok);
+
+        console.log("Grok Response:", assistantReply);
+
+        if (!assistantReply) {
+            throw new Error("No response received from Grok API");
+        }
+
+        // Add assistant message to thread
         thread.messages.push({role: "assistant", content: assistantReply});
         thread.updatedAt = new Date();
 
+        // Save to database
         await thread.save();
-        res.json({reply: assistantReply});
+        
+        res.json({reply: assistantReply, threadId: threadId});
+
     } catch(err) {
-        console.log(err);
-        res.status(500).json({error: "something went wrong"});
+        console.error("Chat error:", err);
+        res.status(500).json({error: err.message || "something went wrong"});
     }
 });
-
-
-
 
 export default router;
