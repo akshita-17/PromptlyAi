@@ -12,7 +12,7 @@ const getGrokAPIResponse = async(messages) => {
             "Authorization": `Bearer ${process.env.GROK_API_KEY}`
         },
         body: JSON.stringify({
-            model: "grok-2",
+            model: "grok-4.20",
             messages: messages,
             stream: false
         })
