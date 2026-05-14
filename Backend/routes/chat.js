@@ -1,6 +1,6 @@
 import express from "express";
 import Thread from "../models/Thread.js";
-import getGrokAPIResponse from "../utils/openai.js";
+import getGrokAPIResponse from "../utils/grokai.js";
 
 const router = express.Router();
 
