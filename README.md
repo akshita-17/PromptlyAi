@@ -9,7 +9,7 @@ A full-stack AI-powered conversational application built with React, Node.js, Ex
 - Thread-based chat system
 - Store and retrieve user & assistant messages
 - CRUD operations for chat threads
-- AI response integration via Grok AI Chat Completions API
+- AI response integration via Groq AI Chat Completions API
 - Full conversation context sent per request using stored message history
 - RESTful API design
 - Responsive React frontend with typing animation
@@ -30,7 +30,7 @@ A full-stack AI-powered conversational application built with React, Node.js, Ex
 - Node.js
 - Express.js
 - MongoDB + Mongoose
-- Grok AI Chat Completions API (`grok-2`)
+- Groq AI Chat Completions API 
 
 ---
 
@@ -169,7 +169,6 @@ Each chat message is stored in MongoDB under a thread. When a new message is sen
 
 - 🔐 Authentication & user management (JWT-based)
 - 🐳 Docker containerization for easier deployment
-- ☁️ AWS deployment for production hosting
 - ⚙️ CI/CD pipeline for automated build and testing
 
 ---
