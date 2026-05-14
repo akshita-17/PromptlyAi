@@ -9,7 +9,7 @@ A full-stack AI-powered conversational application built with React, Node.js, Ex
 - Thread-based chat system
 - Store and retrieve user & assistant messages
 - CRUD operations for chat threads
-- AI response integration via OpenAI Chat Completions API
+- AI response integration via Grok AI Chat Completions API
 - Full conversation context sent per request using stored message history
 - RESTful API design
 - Responsive React frontend with typing animation
@@ -30,7 +30,7 @@ A full-stack AI-powered conversational application built with React, Node.js, Ex
 - Node.js
 - Express.js
 - MongoDB + Mongoose
-- OpenAI Chat Completions API (`gpt-4o-mini`)
+- Grok AI Chat Completions API (`grok-2`)
 
 ---
 
@@ -143,14 +143,14 @@ npm run dev
 Create a `.env` file in the Backend directory:
 ```
 MONGODB_URI=your_mongodb_uri
-OPENAI_API_KEY=your_api_key
+GROK_API_KEY=your_grok_api_key
 ```
 
 ---
 
 ## How It Works
 
-Each chat message is stored in MongoDB under a thread. When a new message is sent, the full message history for that thread is fetched and passed to the OpenAI Chat Completions API as context. This keeps conversations coherent across multiple messages without relying on any stateful API.
+Each chat message is stored in MongoDB under a thread. When a new message is sent, the full message history for that thread is fetched and passed to the Grok AI Chat Completions API as context. The Grok AI response is then stored alongside the user message in the database.
 
 ---
 
@@ -159,7 +159,7 @@ Each chat message is stored in MongoDB under a thread. When a new message is sen
 - Designed thread-message schema in MongoDB
 - Built REST APIs using Express with proper error handling
 - Managed async flows across frontend and backend
-- Integrated OpenAI Chat Completions API with full conversation context
+- Integrated Grok AI Chat Completions API with full conversation context
 - Built a React UI with typing animation, markdown rendering, and thread management
 - Used React Context API for global state
 
