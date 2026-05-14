@@ -1,6 +1,7 @@
 import express from "express";
 import Thread from "../models/Thread.js";
-import getGrokAPIResponse from "../utils/openai.js";
+import { v4 as uuidv4 } from "uuid";
+import getGrokAPIResponse from "../utils/groqai.js";
 
 const router = express.Router();
 
@@ -80,10 +81,12 @@ router.post("/chat", async(req, res) => {
         if(!thread) {
             //create a new thread in Db
             thread = new Thread({
-                threadId,
+                 threadId: uuidv4(),
                 title: message,
                 messages: [{role: "user", content: message}]
+                
             });
+            console.log(threadId);
         } else {
             thread.messages.push({role: "user", content: message});
         }
@@ -112,7 +115,7 @@ router.post("/chat", async(req, res) => {
         // Save to database
         await thread.save();
         
-        res.json({reply: assistantReply, threadId: threadId});
+        res.json({reply: assistantReply, threadId: thread.threadId});
 
     } catch(err) {
         console.error("Chat error:", err);

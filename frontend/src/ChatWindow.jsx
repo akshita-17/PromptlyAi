@@ -3,28 +3,47 @@ import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect } from "react";
 import {ScaleLoader} from "react-spinners";
+import {v1 as uuidv1} from "uuid";
 
 function ChatWindow() {
     const {prompt, setPrompt, reply, setReply, currThreadId, setPrevChats, setNewChat} = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
-    const getReply = async () => {
-        setLoading(true);
-        setNewChat(false);
+    // const getReply = async () => {
+    //     setLoading(true);
+    //     setNewChat(false);
 
-        console.log("message ", prompt, " threadId ", currThreadId);
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: prompt,
-                threadId: currThreadId
-            })
-        };
+    //     console.log("message ", prompt, " threadId ", currThreadId);
+    //     const options = {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({
+    //             message: prompt,
+    //             threadId: currThreadId
+    //         })
+    //     };
+const getReply = async () => {
+    if(!prompt.trim()) return;  // ← don't send empty messages
+    
+    setLoading(true);
+    setNewChat(false);
 
+    // Use a fallback if currThreadId is somehow null
+    const threadId = currThreadId || uuidv1();  // ← add this
+    console.log("message ", prompt, " threadId ", threadId);
+
+    const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            message: prompt,
+            threadId: threadId   // ← use local variable, not context
+        })
+    };
+    // rest stays the same...
         try {
             const response = await fetch("http://localhost:8080/api/chat", options);
             const res = await response.json();
