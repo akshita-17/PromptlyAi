@@ -10,7 +10,13 @@ const PORT = 8080;
 app.use(express.json());
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'promptlyaiproject-a58ctighy-akshita-s-dev.vercel.app'],
+  origin: function(origin, callback) {
+    if (!origin || origin.endsWith('.vercel.app') || origin === 'http://localhost:5173') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
