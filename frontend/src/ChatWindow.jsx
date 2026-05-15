@@ -95,11 +95,14 @@ const getReply = async () => {
                     <div className="dropDownItem"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</div>
                 </div>
             }
-           <div className="chatScrollArea">
-    {newChat && <h1>Start a New Chat!</h1>}
-    <Chat></Chat>
-    <ScaleLoader color="#fff" loading={loading}></ScaleLoader>
-</div>
+            {/* <Chat></Chat>
+
+            <ScaleLoader color="#fff" loading={loading}>
+            </ScaleLoader> */}
+             <div className="chatScrollArea">
+            <Chat />
+            <ScaleLoader color="#fff" loading={loading} />
+        </div>
             
             <div className="chatInput">
                 <div className="inputBox">
