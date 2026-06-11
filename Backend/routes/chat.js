@@ -40,7 +40,7 @@ router.get("/thread", async (req, res) => {
     try {
         const threads = await Thread.find({ userId: req.user.id })  // ← scoped to user
             .sort({ updatedAt: -1 })
-            .select("ThreadId title updatedAt"); // ← only send what sidebar needs
+            .select("threadId title updatedAt"); // ← only send what sidebar needs
         res.json(threads);
     } catch (err) {
         console.error(err);
@@ -65,11 +65,11 @@ router.get("/thread", async (req, res) => {
 //         res.status(500).json({error: "Failed to fetch chat"});
 //     }
 // });
-router.get("/thread/:ThreadId", async (req, res) => {
-    const { ThreadId } = req.params;
+router.get("/thread/:threadId", async (req, res) => {
+    const { threadId } = req.params;
     try {
         const thread = await Thread.findOne({
-            ThreadId,
+            threadId,
             userId: req.user.id             // ← user can only access their own thread
         });
         if (!thread) return res.status(404).json({ message: "Thread not found" });
@@ -98,11 +98,11 @@ router.get("/thread/:ThreadId", async (req, res) => {
 //         res.status(500).json({error: "Failed to delete thread"});
 //     }
 // });
-router.delete("/thread/:ThreadId", async (req, res) => {
-    const { ThreadId } = req.params;
+router.delete("/thread/:threadId", async (req, res) => {
+    const { threadId } = req.params;
     try {
         const deleted = await Thread.findOneAndDelete({
-            ThreadId,
+            threadId,
             userId: req.user.id             // ← can only delete own thread
         });
         if (!deleted) return res.status(404).json({ message: "Thread not found" });
@@ -172,18 +172,18 @@ router.delete("/thread/:ThreadId", async (req, res) => {
 // export default router;
 
 router.post("/chat", async (req, res) => {
-    const { ThreadId, message } = req.body;
-
-    if (!ThreadId || !message) {
+    const { threadId, message } = req.body;
+console.log(req.body);
+    if (!threadId || !message) {
         return res.status(400).json({ message: "ThreadId and message are required" });
     }
 
     try {
-        let thread = await Thread.findOne({ ThreadId, userId: req.user.id });
+        let thread = await Thread.findOne({ threadId, userId: req.user.id });
 
         if (!thread) {
             thread = new Thread({
-                ThreadId,
+                threadId,
                 userId: req.user.id,        // ← attach owner on creation
                 title: message.slice(0, 40), // ← use first 40 chars as title
                 messages: [{ role: "user", content: message }]
@@ -191,16 +191,32 @@ router.post("/chat", async (req, res) => {
         } else {
             thread.messages.push({ role: "user", content: message });
         }
+        // Prepare messages for Grok API (full conversation context)
+        const messagesForGrok = thread.messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+        }));
+        console.log("Sending to Grok:", messagesForGrok);
 
-        const { reply: assistantReply, responseId } = await getOpenAiResponse(message, ThreadId);
-        thread.messages.push({ role: "assistant", content: assistantReply });
+        const assistantReply = await getGrokAPIResponse(messagesForGrok);
+        console.log("Grok Response:", assistantReply);
+
+        if (!assistantReply) {
+            throw new Error("No response received from Grok API");
+        }
+
+        // Add assistant message to thread
+        thread.messages.push({role: "assistant", content: assistantReply});
+        thread.updatedAt = new Date();
+
+        // Save to database
         await thread.save();
+        
+         res.json({reply: assistantReply, threadId: thread.threadId});
 
-        res.json({ reply: assistantReply, threadId: responseId });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message });
+    } catch(err) {
+        console.error("Chat error:", err);
+        res.status(500).json({error: err.message || "something went wrong"});
     }
 });
-
 export default router;
