@@ -3,10 +3,14 @@ import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect } from "react";
 import {ScaleLoader} from "react-spinners";
+import { apiFetch } from "./api.js";
 import {v1 as uuidv1} from "uuid";
-import { API_URL } from './api';
+
+import { useAuth } from "./AuthContext.jsx";
+
 
 function ChatWindow() {
+     const { logout } = useAuth();
     const {prompt, setPrompt, reply, setReply, currThreadId, setPrevChats, setNewChat} = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +50,7 @@ const getReply = async () => {
     };
     // rest stays the same...
         try {
-           const response = await fetch(`${API_URL}/api/chat`, options);
+           const response = await apiFetch(`/api/chat`, options);
 
             const res = await response.json();
             console.log(res);
@@ -90,9 +94,9 @@ const getReply = async () => {
             {
                 isOpen && 
                 <div className="dropDown">
-                    <div className="dropDownItem"><i class="fa-solid fa-gear"></i> Settings</div>
+                    <div className="dropDownItem" ><i class="fa-solid fa-gear"></i> Settings</div>
                     <div className="dropDownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</div>
-                    <div className="dropDownItem"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</div>
+                    <div className="dropDownItem" onClick={logout}><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</div>
                 </div>
             }
             {/* <Chat></Chat>
