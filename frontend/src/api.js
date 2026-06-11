@@ -1,7 +1,7 @@
 // export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 // src/api.js
-const BASE_URL = "http://localhost:8080";
+const BASE_URL =  import.meta.env.VITE_API_UR;
 
 export const apiFetch = async (path, options = {}) => {
     const token = localStorage.getItem("token");
