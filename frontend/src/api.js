@@ -1,15 +1,42 @@
+// // export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+// // src/api.js
+// const BASE_URL =  import.meta.env.VITE_API_URL;
+
+// export const apiFetch = async (path, options = {}) => {
+//     const token = localStorage.getItem("token");
+
+//     const response = await fetch(`${BASE_URL}${path}`, {
+//         ...options,
+//         headers: {
+//             "Content-Type": "application/json",
+//             ...(token && { Authorization: `Bearer ${token}` }), // ← auto-attach JWT
+//             ...options.headers,
+//         }
+//     });
+
+//     // ← If token expired, force logout
+//     if (response.status === 401) {
+//         localStorage.removeItem("token");
+//         localStorage.removeItem("user");
+//         window.location.href = "/login";    // ← redirect to login
+//     }
+
+//     return response;
+// };
 // export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 // src/api.js
-const BASE_URL =  import.meta.env.VITE_API_UR;
+const BASE_URL =  import.meta.env.VITE_API_URL;
 
 export const apiFetch = async (path, options = {}) => {
     const token = localStorage.getItem("token");
+    const isFormData = options.body instanceof FormData; // ← let the browser set multipart boundary
 
     const response = await fetch(`${BASE_URL}${path}`, {
         ...options,
         headers: {
-            "Content-Type": "application/json",
+            ...(!isFormData && { "Content-Type": "application/json" }),
             ...(token && { Authorization: `Bearer ${token}` }), // ← auto-attach JWT
             ...options.headers,
         }
